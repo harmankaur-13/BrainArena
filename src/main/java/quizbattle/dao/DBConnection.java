@@ -14,21 +14,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Manages database connections using standard JDBC DriverManager.
+ * Manages database connections using standard JDBC DriverManager with MySQL.
  * WHY: No connection pooling or complex reflection proxies; direct and student-friendly.
  */
 public class DBConnection {
 
     static {
         try {
-            Class.forName("org.sqlite.JDBC");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException ignored) {
         }
     }
 
     public static Connection getConnection() throws SQLException {
-        // Simple direct connection using SQLite JDBC
-        return DriverManager.getConnection(Constants.DB_URL);
+        // Direct connection using MySQL Connector/J
+        return DriverManager.getConnection(Constants.DB_URL, Constants.DB_USER, Constants.DB_PASSWORD);
     }
 
     /**
@@ -46,7 +46,8 @@ public class DBConnection {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Failed to initialize database", e);
+            throw new DataAccessException(
+                "Failed to initialize database. Ensure MySQL is running and connection details in Constants.java/env vars are correct.", e);
         }
     }
 

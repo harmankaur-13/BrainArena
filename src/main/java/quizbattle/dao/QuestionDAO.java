@@ -18,7 +18,7 @@ public class QuestionDAO {
 
     public List<Question> findRandom(int count) {
         String sql = "SELECT id, text, option_a, option_b, option_c, option_d, correct_option, category " +
-                     "FROM questions ORDER BY RANDOM() LIMIT ?";
+                     "FROM questions ORDER BY RAND() LIMIT ?";
         List<Question> list = new ArrayList<>();
 
         try (Connection conn = DBConnection.getConnection();

@@ -27,4 +27,10 @@ class QuestionTest {
         assertFalse(q.isCorrect(2));
         assertFalse(q.isCorrect(3));
     }
+
+    @Test
+    void testMySQLDriverClassAvailable() throws ClassNotFoundException {
+        Class<?> driver = Class.forName("com.mysql.cj.jdbc.Driver");
+        org.junit.jupiter.api.Assertions.assertNotNull(driver);
+    }
 }

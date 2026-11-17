@@ -1,19 +1,19 @@
 CREATE TABLE IF NOT EXISTS questions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     text TEXT NOT NULL,
-    option_a TEXT NOT NULL,
-    option_b TEXT NOT NULL,
-    option_c TEXT NOT NULL,
-    option_d TEXT NOT NULL,
+    option_a VARCHAR(255) NOT NULL,
+    option_b VARCHAR(255) NOT NULL,
+    option_c VARCHAR(255) NOT NULL,
+    option_d VARCHAR(255) NOT NULL,
     correct_option CHAR(1) NOT NULL,
-    category TEXT NOT NULL
+    category VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS game_scores (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    player_name TEXT NOT NULL,
-    score INTEGER NOT NULL,
-    correct_answers INTEGER NOT NULL,
-    final_rank INTEGER NOT NULL
+    player_name VARCHAR(100) NOT NULL,
+    score INT NOT NULL,
+    correct_answers INT NOT NULL,
+    final_rank INT NOT NULL
 );

@@ -1,8 +1,6 @@
 # BrainArena
 
-BrainArena is a command-line quiz game written in Java. One human player competes against two computer-controlled players on the same set of multiple-choice questions. Every player runs on its own thread, and the fastest correct answer earns the most points. Questions and results are stored in an SQLite database through JDBC.
-
-Course project for Programming in Java (25CSE0202), Continuous Evaluation 3.
+BrainArena is a command-line quiz game written in Java. One human player competes against two computer-controlled players on the same set of multiple-choice questions. Every player runs on its own thread, and the fastest correct answer earns the most points. Questions and results are stored in a MySQL database through JDBC.
 
 ## Problem Statement
 
@@ -37,7 +35,7 @@ Basic quiz programs usually handle one player at a time, so they do not show wha
 | Object-oriented design | Abstract `Player` class with `BotPlayer` and `HumanPlayer` subclasses; immutable `Question` and `Answer` classes |
 | Collections | `List` for questions and players, `ConcurrentHashMap` for the live scoreboard |
 | Concurrency | `ExecutorService`, `CountDownLatch`, `AtomicInteger`, `Future` |
-| Database | JDBC with SQLite, DAO classes, `PreparedStatement`, one transaction per game |
+| Database | JDBC with MySQL, DAO classes, `PreparedStatement`, one transaction per game |
 | Exception handling | Custom unchecked `DataAccessException` for database errors |
 
 ### Game flow
