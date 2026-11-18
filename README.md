@@ -1,6 +1,6 @@
 # BrainArena
 
-BrainArena is a fast, interactive command-line quiz game written in Java. Players answer multiple-choice trivia questions, view instant feedback and live scores, and track their stats and rankings stored in a MySQL database through JDBC.
+BrainArena is a fast, interactive command-line quiz game written in pure Java (no build tools required). Players answer multiple-choice trivia questions, view instant feedback and live scores, and track their stats and rankings stored in a MySQL database through JDBC.
 
 ## Objectives
 
@@ -15,11 +15,20 @@ BrainArena is a fast, interactive command-line quiz game written in Java. Player
 ## Features
 
 - Fast, barrier-free trivia gameplay with zero artificial wait delays
+- Topic/category selection (Science, History, Technology, Geography, General Knowledge, or All Topics)
 - Instant question evaluation and real-time score updates (+10 points per correct answer)
 - Persistent leaderboard (Top 5 players by total score)
 - Career statistics per player (games played, wins, total points, correct answers)
 - Question bank management: Add new questions or view and delete existing ones
 - Clean JDBC persistence with custom exception handling
+
+## How to Run
+
+Simply run the single execution script:
+```bash
+./run.sh
+```
+*(The script automatically compiles any code changes, syncs SQL scripts into `bin/`, prompts for your MySQL password securely, and starts the game).*
 
 ## Design Overview
 
@@ -42,12 +51,23 @@ BrainArena is a fast, interactive command-line quiz game written in Java. Player
 ## Project Structure
 
 ```
-src/main/java/quizbattle/
-    Main.java            Command-line menu and game controller
-    model/               Question, Answer, Player, HumanPlayer
-    service/             QuizEngine, Round, Scoreboard
-    dao/                 DBConnection, QuestionDAO, ScoreDAO
-    util/                Constants, ConsoleUI
-    exception/           DataAccessException
-src/main/resources/      schema.sql, seed.sql (200 curated questions)
+BrainArena/
+├── run.sh               # Single script: compiles & starts the game
+├── README.md
+├── .gitignore
+├── lib/
+│   └── mysql-connector-j-26.10.0.jar
+├── src/
+│   └── main/
+│       ├── java/quizbattle/
+│       │   ├── Main.java
+│       │   ├── dao/
+│       │   ├── model/
+│       │   ├── service/
+│       │   ├── util/
+│       │   └── exception/
+│       └── resources/
+│           ├── schema.sql
+│           └── seed.sql (200 questions)
+└── bin/                 # Generated build output (ignored by git)
 ```
