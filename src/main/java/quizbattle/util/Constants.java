@@ -2,7 +2,6 @@ package quizbattle.util;
 
 /**
  * Common constants used across the Quiz Battle project.
- * WHY: Centralizes settings without needing complex property file loaders.
  */
 public final class Constants {
     private Constants() {} // Prevent instantiation
@@ -17,11 +16,8 @@ public final class Constants {
             ? System.getenv("DB_PASSWORD")
             : "";
 
-    // Rank-based points
-    public static final int POINTS_RANK_1 = 10;
-    public static final int POINTS_RANK_2 = 7;
-    public static final int POINTS_RANK_3 = 5;
-    public static final int POINTS_OTHER = 3;
+    // Points awarded per correct answer
+    public static final int POINTS_PER_CORRECT = 10;
 
     // ANSI Colors for console output
     public static final String RESET = "\u001B[0m";

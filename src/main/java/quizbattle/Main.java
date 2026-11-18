@@ -3,7 +3,6 @@ package quizbattle;
 import quizbattle.dao.DBConnection;
 import quizbattle.dao.QuestionDAO;
 import quizbattle.dao.ScoreDAO;
-import quizbattle.model.BotPlayer;
 import quizbattle.model.HumanPlayer;
 import quizbattle.model.Player;
 import quizbattle.model.Question;
@@ -11,8 +10,6 @@ import quizbattle.service.QuizEngine;
 import quizbattle.util.ConsoleUI;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Main application entry point for the Quiz Battle CLI.
@@ -26,47 +23,60 @@ public class Main {
         // Initialize database tables and seed questions on startup
         DBConnection.initDatabase();
 
-        System.out.println("=== MULTIPLAYER QUIZ BATTLE (TERMINAL) ===");
+        System.out.println("=== QUIZ BATTLE (TERMINAL) ===");
 
         boolean running = true;
         while (running) {
             printMenu();
-            int choice = ConsoleUI.promptInt("Select an option", 0, 6);
+            int choice = ConsoleUI.promptInt("Select an option", 0, 5);
             switch (choice) {
                 case 1 -> playGame();
                 case 2 -> scoreDAO.printTopPlayers(5);
                 case 3 -> showPlayerStats();
                 case 4 -> addQuestion();
                 case 5 -> viewOrDeleteQuestions();
-                case 6 -> runConcurrencyDemo();
                 case 0 -> { System.out.println("Goodbye!"); running = false; }
             }
         }
     }
 
     private static void printMenu() {
-        System.out.println("\n--- MAIN MENU ---\n1. Play a game\n2. Leaderboard (Top 5)\n3. Player stats\n4. Add a question\n5. View/delete questions\n6. Concurrency demo (Safe vs Unsafe)\n0. Exit");
+        System.out.println("\n--- MAIN MENU ---\n1. Play a game\n2. Leaderboard (Top 5)\n3. Player stats\n4. Add a question\n5. View/delete questions\n0. Exit");
     }
 
     private static void playGame() {
         String name = ConsoleUI.prompt("Enter your player name:");
         if (name.isEmpty()) name = "Player";
+
+        // Prompt user for topic
+        List<String> categories = questionDAO.findCategories();
+        String selectedCategory = null;
+
+        if (!categories.isEmpty()) {
+            System.out.println("\n--- Select a Topic ---");
+            System.out.println("0. All Topics (Random Mix)");
+            for (int i = 0; i < categories.size(); i++) {
+                System.out.printf("%d. %s%n", i + 1, categories.get(i));
+            }
+            int choice = ConsoleUI.promptInt("Choose topic (0 for All)", 0, categories.size());
+            if (choice > 0) {
+                selectedCategory = categories.get(choice - 1);
+            }
+        }
+
         int count = ConsoleUI.promptInt("Number of questions to play (1 to 20)", 1, 20);
 
-        List<Question> questions = questionDAO.findRandom(count);
+        List<Question> questions = (selectedCategory == null)
+                ? questionDAO.findRandom(count)
+                : questionDAO.findRandomByCategory(selectedCategory, count);
+
         if (questions.isEmpty()) {
-            System.out.println("No questions available. Please add some first.");
+            System.out.println("No questions available for this selection. Please add some first.");
             return;
         }
 
-        // 1 Human + 2 Bots (GeniusBot: 0.90 accuracy, RookieBot: 0.40 accuracy, 2-5s delay)
-        List<Player> players = List.of(
-                new HumanPlayer(name),
-                new BotPlayer("GeniusBot", 0.90, 2000, 4000),
-                new BotPlayer("RookieBot", 0.40, 2500, 5000)
-        );
-
-        engine.runGame(players, questions);
+        Player player = new HumanPlayer(name);
+        engine.runGame(player, questions);
     }
 
     private static void showPlayerStats() {
@@ -100,40 +110,5 @@ public class Main {
         if (id > 0) {
             System.out.println(questionDAO.delete(id) ? "Question deleted." : "ID not found.");
         }
-    }
-
-    /**
-     * Viva demonstration: 20 threads simultaneously incrementing 1,000 times.
-     * Shows how plain int++ loses updates from race conditions while AtomicInteger reaches 20,000.
-     */
-    private static void runConcurrencyDemo() {
-        System.out.println("\n=== CONCURRENCY DEMO: SAFE VS UNSAFE COUNTER ===");
-        System.out.println("Simulating 20 threads, each incrementing 1,000 times (Expected: 20000).\n");
-
-        final int[] unsafeCounter = {0};
-        final AtomicInteger safeCounter = new AtomicInteger(0);
-        CountDownLatch startLatch = new CountDownLatch(1), doneLatch = new CountDownLatch(20);
-
-        for (int i = 0; i < 20; i++) {
-            new Thread(() -> {
-                try {
-                    startLatch.await(); // Release all 20 threads simultaneously
-                    for (int j = 0; j < 1000; j++) {
-                        unsafeCounter[0]++;                // Unsafe int++ (loses updates)
-                        safeCounter.incrementAndGet();     // Safe AtomicInteger (lock-free CAS)
-                    }
-                } catch (InterruptedException ignored) {
-                } finally {
-                    doneLatch.countDown();
-                }
-            }).start();
-        }
-
-        startLatch.countDown(); // Fire start signal
-        try { doneLatch.await(); } catch (InterruptedException ignored) {}
-
-        System.out.println("Expected Total:             20000");
-        System.out.println("Unsafe counter (int++):     " + unsafeCounter[0] + " (Lost " + (20000 - unsafeCounter[0]) + " updates!)");
-        System.out.println("Safe counter (Atomic):      " + safeCounter.get() + " (100% thread-safe, 0 lost)\n");
     }
 }

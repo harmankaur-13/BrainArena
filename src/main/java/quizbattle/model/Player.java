@@ -1,8 +1,8 @@
 package quizbattle.model;
 
 /**
- * Abstract base class for all quiz players.
- * Demonstrates: Abstraction and Polymorphism (subclasses define chooseAnswer).
+ * Base class for quiz players.
+ * Demonstrates: Abstraction and encapsulation.
  */
 public abstract class Player {
     private final String name;
@@ -41,8 +41,7 @@ public abstract class Player {
     }
 
     /**
-     * Abstract method: Each player type decides how to choose an answer.
-     * WHY: BotPlayer overrides this to sleep and answer probabilistically.
+     * Decides how to choose an answer for the given question.
      */
-    public abstract int chooseAnswer(Question q) throws InterruptedException;
+    public abstract int chooseAnswer(Question q);
 }

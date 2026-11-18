@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -17,7 +18,6 @@ public class ScoreDAO {
 
     /**
      * Saves scores for all players in ONE database transaction.
-     * WHY for Viva: Atomicity ensures all player scores are saved together or none at all.
      */
     public void saveScores(List<Player> players, List<Integer> finalRanks) {
         String sql = "INSERT INTO game_scores (player_name, score, correct_answers, final_rank) " +
@@ -59,6 +59,19 @@ public class ScoreDAO {
                     conn.close();
                 } catch (SQLException ignored) {}
             }
+        }
+    }
+
+    /**
+     * Clears all leaderboard history and scores from the database.
+     */
+    public void clearScores() {
+        String sql = "TRUNCATE TABLE game_scores";
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to clear game scores", e);
         }
     }
 

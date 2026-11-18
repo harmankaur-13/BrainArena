@@ -4,7 +4,6 @@ import quizbattle.util.ConsoleUI;
 
 /**
  * Human player that reads answers interactively from the console.
- * Demonstrates: Polymorphism (extends Player with blocking keyboard input).
  */
 public class HumanPlayer extends Player {
 

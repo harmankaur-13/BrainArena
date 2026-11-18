@@ -36,6 +36,44 @@ public class QuestionDAO {
         }
     }
 
+    public List<Question> findRandomByCategory(String category, int count) {
+        String sql = "SELECT id, text, option_a, option_b, option_c, option_d, correct_option, category " +
+                     "FROM questions WHERE LOWER(category) = LOWER(?) ORDER BY RAND() LIMIT ?";
+        List<Question> list = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, category.trim());
+            ps.setInt(2, count);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to fetch questions for category: " + category, e);
+        }
+    }
+
+    public List<String> findCategories() {
+        String sql = "SELECT DISTINCT category FROM questions WHERE category IS NOT NULL AND category != '' ORDER BY category ASC";
+        List<String> list = new ArrayList<>();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(rs.getString("category"));
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to fetch categories", e);
+        }
+    }
+
     public List<Question> findAll() {
         String sql = "SELECT id, text, option_a, option_b, option_c, option_d, correct_option, category " +
                      "FROM questions ORDER BY id ASC";
