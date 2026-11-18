@@ -38,7 +38,7 @@ public class QuizEngine {
         System.out.printf("  A) %-25s B) %-25s%n", q.getOptions().get(0), q.getOptions().get(1));
         System.out.printf("  C) %-25s D) %-25s%n%n", q.getOptions().get(2), q.getOptions().get(3));
 
-        // 2. Immediate player input (no threads, no bot delays, no time barrier)
+        // 2. Immediate player input
         long startTime = System.currentTimeMillis();
         int chosen = player.chooseAnswer(q);
         long elapsed = System.currentTimeMillis() - startTime;

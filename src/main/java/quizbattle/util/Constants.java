@@ -1,7 +1,7 @@
 package quizbattle.util;
 
 /**
- * Common constants used across the Quiz Battle project.
+ * Common constants used across the BrainArena project.
  */
 public final class Constants {
     private Constants() {} // Prevent instantiation
@@ -24,6 +24,4 @@ public final class Constants {
     public static final String BOLD = "\u001B[1m";
     public static final String RED = "\u001B[31m";
     public static final String GREEN = "\u001B[32m";
-    public static final String YELLOW = "\u001B[33m";
-    public static final String CYAN = "\u001B[36m";
 }

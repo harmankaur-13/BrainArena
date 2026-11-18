@@ -32,7 +32,7 @@ public class DBConnection {
     }
 
     /**
-     * Creates tables on startup and seeds 20 questions if the database is empty.
+     * Creates tables on startup and seeds 200 questions if the database is empty.
      */
     public static void initDatabase() {
         try (Connection conn = getConnection()) {

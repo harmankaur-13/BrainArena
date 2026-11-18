@@ -12,7 +12,7 @@ import quizbattle.util.ConsoleUI;
 import java.util.List;
 
 /**
- * Main application entry point for the Quiz Battle CLI.
+ * Main application entry point for the BrainArena CLI.
  */
 public class Main {
     private static final QuestionDAO questionDAO = new QuestionDAO();
@@ -23,7 +23,7 @@ public class Main {
         // Initialize database tables and seed questions on startup
         DBConnection.initDatabase();
 
-        System.out.println("=== QUIZ BATTLE (TERMINAL) ===");
+        System.out.println("=== BRAINARENA ===");
 
         boolean running = true;
         while (running) {
