@@ -24,11 +24,17 @@ BrainArena is a fast, interactive command-line quiz game written in pure Java (n
 
 ## How to Run
 
-Simply run the single execution script:
-```bash
-./run.sh
-```
-*(The script automatically compiles any code changes, syncs SQL scripts into `bin/`, prompts for your MySQL password securely, and starts the game).*
+1. Configure environment variables:
+   Copy `.env.example` to `.env` and fill in your MySQL credentials (especially `DB_PASSWORD`):
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Simply run the execution script:
+   ```bash
+   ./run.sh
+   ```
+   *(The script automatically loads `.env`, compiles code into `bin/`, syncs SQL resources, and starts the game without interactively prompting for a password).*
 
 ## Design Overview
 

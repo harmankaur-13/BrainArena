@@ -17,11 +17,11 @@ mkdir -p bin
 "$JAVAC_BIN" -d bin -cp "lib/*" $(find src/main/java -name "*.java")
 cp src/main/resources/*.sql bin/
 
-# 3. Prompt for password if not provided and running interactively
-if [ -z "${DB_PASSWORD+x}" ] && [ -t 0 ]; then
-    read -s -p "Enter MySQL password (or press Enter if blank): " DB_PASSWORD
-    echo ""
-    export DB_PASSWORD
+# 3. Load environment variables from .env file if it exists
+if [ -f ".env" ]; then
+    set -a
+    source ".env"
+    set +a
 fi
 
 # 4. Launch the application
