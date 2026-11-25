@@ -15,6 +15,7 @@ BrainArena is a fast, interactive command-line quiz game written in pure Java (n
 ## Features
 
 - Fast, barrier-free trivia gameplay with zero artificial wait delays
+- Multithreaded per-question countdown timer (15s time limit via background thread executor)
 - Topic/category selection (Science, History, Technology, Geography, General Knowledge, or All Topics)
 - Instant question evaluation and real-time score updates (+10 points per correct answer)
 - Persistent leaderboard (Top 5 players by total score)
@@ -40,9 +41,9 @@ BrainArena is a fast, interactive command-line quiz game written in pure Java (n
 
 | Area | Implementation |
 |---|---|
-| Object-oriented design | Abstract `Player` base class with `HumanPlayer` implementation; immutable `Question` and `Answer` classes |
-| Collections | `List` for questions, `Map` for game score tracking |
+| Object-oriented design | Encapsulated `Player` class; immutable `Question` class |
 | Architecture | Layered DAO architecture (`DBConnection`, `QuestionDAO`, `ScoreDAO`) |
+| Multithreading | `QuestionTimerTask` utilizing `ExecutorService` and `Future` for per-question countdowns |
 | Database | JDBC with MySQL, `PreparedStatement`, transaction management |
 | Exception handling | Custom unchecked `DataAccessException` for robust database error handling |
 

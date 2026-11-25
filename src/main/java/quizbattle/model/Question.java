@@ -49,6 +49,6 @@ public class Question {
      * Checks if the chosen option index matches the correct answer.
      */
     public boolean isCorrect(int chosenIndex) {
-        return chosenIndex == correctIndex;
+        return chosenIndex >= 0 && chosenIndex == correctIndex;
     }
 }

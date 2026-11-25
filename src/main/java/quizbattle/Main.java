@@ -3,7 +3,6 @@ package quizbattle;
 import quizbattle.dao.DBConnection;
 import quizbattle.dao.QuestionDAO;
 import quizbattle.dao.ScoreDAO;
-import quizbattle.model.HumanPlayer;
 import quizbattle.model.Player;
 import quizbattle.model.Question;
 import quizbattle.service.QuizEngine;
@@ -75,7 +74,7 @@ public class Main {
             return;
         }
 
-        Player player = new HumanPlayer(name);
+        Player player = new Player(name);
         engine.runGame(player, questions);
     }
 

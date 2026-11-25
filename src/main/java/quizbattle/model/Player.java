@@ -1,10 +1,13 @@
 package quizbattle.model;
 
+import quizbattle.service.QuestionTimerTask;
+import quizbattle.util.Constants;
+
 /**
- * Base class for quiz players.
- * Demonstrates: Abstraction and encapsulation.
+ * Represents a quiz player in the game.
+ * Encapsulates player details, score tracking, and answer selection.
  */
-public abstract class Player {
+public class Player {
     private final String name;
     private int score;
     private int correctCount;
@@ -41,7 +44,25 @@ public abstract class Player {
     }
 
     /**
-     * Decides how to choose an answer for the given question.
+     * Prompts the player to choose an answer under a countdown timer.
+     * Returns the chosen option index (0 for A, 1 for B, 2 for C, 3 for D), or -1 if timed out.
      */
-    public abstract int chooseAnswer(Question q);
+    public int chooseAnswer(Question q) {
+        while (true) {
+            String input = QuestionTimerTask.readLineWithTimeout(
+                    "Your answer (A/B/C/D)", Constants.QUESTION_TIME_LIMIT_SECONDS);
+            if (input == null) {
+                // Timeout occurred
+                return -1;
+            }
+            input = input.toUpperCase();
+            if (input.length() == 1) {
+                int index = "ABCD".indexOf(input.charAt(0));
+                if (index >= 0) {
+                    return index;
+                }
+            }
+            System.out.println("Invalid option. Please enter A, B, C, or D.");
+        }
+    }
 }

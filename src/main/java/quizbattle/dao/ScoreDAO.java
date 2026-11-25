@@ -79,8 +79,7 @@ public class ScoreDAO {
      * Prints the all-time leaderboard directly to the console.
      */
     public void printTopPlayers(int limit) {
-        String sql = "SELECT player_name, SUM(score) AS total, COUNT(*) AS games, " +
-                     "       SUM(CASE WHEN final_rank = 1 THEN 1 ELSE 0 END) AS wins " +
+        String sql = "SELECT player_name, SUM(score) AS total, COUNT(*) AS games " +
                      "FROM game_scores GROUP BY player_name ORDER BY total DESC LIMIT ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -88,15 +87,15 @@ public class ScoreDAO {
 
             ps.setInt(1, limit);
             try (ResultSet rs = ps.executeQuery()) {
-                System.out.printf("%-4s %-16s %-12s %-8s %-6s%n", "Rank", "Player", "Total Score", "Games", "Wins");
-                System.out.println("--------------------------------------------------");
+                System.out.printf("%-4s %-16s %-12s %-8s%n", "Rank", "Player", "Total Score", "Games");
+                System.out.println("----------------------------------------------");
                 int rank = 1;
                 boolean hasData = false;
                 while (rs.next()) {
                     hasData = true;
-                    System.out.printf("%-4d %-16s %-12d %-8d %-6d%n",
+                    System.out.printf("%-4d %-16s %-12d %-8d%n",
                             rank++, rs.getString("player_name"), rs.getInt("total"),
-                            rs.getInt("games"), rs.getInt("wins"));
+                            rs.getInt("games"));
                 }
                 if (!hasData) {
                     System.out.println("No games recorded yet.");
@@ -112,7 +111,6 @@ public class ScoreDAO {
      */
     public void printStatsFor(String playerName) {
         String sql = "SELECT player_name, COUNT(*) AS games, " +
-                     "       SUM(CASE WHEN final_rank = 1 THEN 1 ELSE 0 END) AS wins, " +
                      "       SUM(score) AS total_score, " +
                      "       SUM(correct_answers) AS total_correct " +
                      "FROM game_scores WHERE LOWER(player_name) = LOWER(?) GROUP BY player_name";
@@ -125,7 +123,6 @@ public class ScoreDAO {
                 if (rs.next()) {
                     System.out.println("\n--- Player Stats: " + rs.getString("player_name") + " ---");
                     System.out.println("  Games Played:    " + rs.getInt("games"));
-                    System.out.println("  Total Wins:      " + rs.getInt("wins"));
                     System.out.println("  Total Points:    " + rs.getInt("total_score"));
                     System.out.println("  Correct Answers: " + rs.getInt("total_correct"));
                 } else {

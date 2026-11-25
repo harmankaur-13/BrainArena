@@ -28,6 +28,9 @@ public final class Constants {
     // Points awarded per correct answer
     public static final int POINTS_PER_CORRECT = 10;
 
+    // Default time limit per question in seconds (multithreaded timer)
+    public static final int QUESTION_TIME_LIMIT_SECONDS = 15;
+
     // ANSI Colors for console output
     public static final String RESET = "\u001B[0m";
     public static final String BOLD = "\u001B[1m";
