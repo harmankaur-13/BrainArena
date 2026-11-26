@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,8 +37,6 @@ public class QuizServer implements Runnable {
     private final AtomicBoolean gameStarted = new AtomicBoolean(false);
     private final AtomicBoolean running = new AtomicBoolean(true);
 
-    private Thread listenerThread;
-    private Thread gameLoopThread;
     private ConnectedPlayer hostPlayer;
 
     public QuizServer(int port, String hostPlayerName, List<Question> questions, int timeLimitSec, String category) {
@@ -52,8 +49,7 @@ public class QuizServer implements Runnable {
 
     public void start() throws IOException {
         serverSocket = new ServerSocket(port);
-        listenerThread = new Thread(this, "BrainArena-NetcatListener");
-        listenerThread.start();
+        new Thread(this, "BrainArena-NetcatListener").start();
     }
 
     @Override
@@ -96,7 +92,7 @@ public class QuizServer implements Runnable {
             if (nameLine.isEmpty()) nameLine = "Challenger";
 
             String uniqueName = makeUniqueName(nameLine);
-            ConnectedPlayer player = new ConnectedPlayer(uniqueName, socket, in, out, false);
+            ConnectedPlayer player = new ConnectedPlayer(uniqueName, socket, out);
             players.add(player);
 
             out.println("\nWelcome, " + Constants.GREEN + uniqueName + Constants.RESET + "!");
@@ -187,14 +183,15 @@ public class QuizServer implements Runnable {
      * Runs the host interaction on the host's own console.
      */
     public void runHostConsole() {
-        hostPlayer = new ConnectedPlayer(hostPlayerName, null, null, null, true);
-        Scanner scanner = new Scanner(System.in);
-
+        hostPlayer = new ConnectedPlayer(hostPlayerName, null, null);
         System.out.println("\nConnected Players:");
         System.out.printf("  1. %s (Host)%n", hostPlayerName);
         System.out.println(Constants.BOLD + "\n>> Press [ENTER] whenever you are ready to START the battle! <<" + Constants.RESET);
 
-        scanner.nextLine();
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            br.readLine();
+        } catch (IOException ignored) {}
         startGame();
 
         // Host's game loop interaction
@@ -202,7 +199,7 @@ public class QuizServer implements Runnable {
         int totalRounds = questions.size();
 
         for (Question q : questions) {
-            runHostRound(roundNum++, totalRounds, q, scanner);
+            runHostRound(roundNum++, totalRounds, q);
         }
 
         finishGame();
@@ -229,7 +226,7 @@ public class QuizServer implements Runnable {
         } catch (InterruptedException ignored) {}
     }
 
-    private void runHostRound(int roundNum, int totalRounds, Question q, Scanner scanner) {
+    private void runHostRound(int roundNum, int totalRounds, Question q) {
         hostPlayer.resetRound();
         for (ConnectedPlayer p : players) {
             p.resetRound();

@@ -13,7 +13,6 @@ import java.util.List;
 public final class NetworkUtils {
 
     public static final int DEFAULT_PORT = 5555;
-    public static final int DISCOVERY_PORT = 5556;
 
     private NetworkUtils() {}
 
