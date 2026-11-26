@@ -15,7 +15,8 @@ import java.sql.Statement;
 
 /**
  * Manages database connections using standard JDBC DriverManager with MySQL.
- * WHY: No connection pooling or complex reflection proxies; direct and student-friendly.
+ * WHY: No connection pooling or complex reflection proxies; direct and
+ * student-friendly.
  */
 public class DBConnection {
 
@@ -40,27 +41,30 @@ public class DBConnection {
 
             // Seed only if questions table has no records
             try (Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM questions")) {
+                    ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM questions")) {
                 if (rs.next() && rs.getInt("total") == 0) {
                     executeScript(conn, "seed.sql");
                 }
             }
         } catch (SQLException e) {
             throw new DataAccessException(
-                "Failed to initialize database. Ensure MySQL is running and connection details in Constants.java/env vars are correct.", e);
+                    "Failed to initialize database. Ensure MySQL is running and connection details in Constants.java/env vars are correct.",
+                    e);
         }
     }
 
     private static void executeScript(Connection conn, String scriptName) {
         try (InputStream is = DBConnection.class.getClassLoader().getResourceAsStream(scriptName)) {
-            if (is == null) return;
+            if (is == null)
+                return;
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                 Statement stmt = conn.createStatement()) {
+                    Statement stmt = conn.createStatement()) {
                 StringBuilder sql = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String trimmed = line.trim();
-                    if (trimmed.startsWith("--") || trimmed.isEmpty()) continue;
+                    if (trimmed.startsWith("--") || trimmed.isEmpty())
+                        continue;
                     sql.append(line).append(" ");
                     if (trimmed.endsWith(";")) {
                         stmt.execute(sql.toString());

@@ -1,80 +1,58 @@
 # BrainArena
 
-BrainArena is a fast, interactive command-line quiz game written in pure Java (no build tools required). Players answer multiple-choice trivia questions, view instant feedback and live scores, and track their stats and rankings stored in a MySQL database through JDBC.
+BrainArena is an interactive command-line quiz game written in pure Java (no build tools required). Play solo or compete in **real-time fastest-finger LAN battles** across multiple PCs over the same Wi-Fi network!
 
-## Objectives
+---
 
-1. Deliver a responsive, barrier-free terminal quiz experience with immediate question flow.
-2. Store questions, game records, and player statistics in MySQL using JDBC.
-3. Provide a command-line menu to play, view top leaderboards, inspect individual statistics, and manage the question bank.
-4. Apply core object-oriented principles (encapsulation, abstraction, inheritance, polymorphism) in the design.
+## ⚡ Zero-Install Wi-Fi Battle (via Netcat / Telnet)
 
-**Scope:** Single-player interactive console interface, immediate feedback.  
-**Out of scope:** Graphical interface, network play, artificial wait delays.
+Your friends **do not need any Java code, do not need to install anything, and do not need any database credentials**. Every Mac, Windows, and Linux computer already has `nc` (Netcat) or `telnet` pre-installed!
 
-## Features
+---
 
-- Fast, barrier-free trivia gameplay with zero artificial wait delays
-- Multithreaded per-question countdown timer (15s time limit via background thread executor)
-- Topic/category selection (Science, History, Technology, Geography, General Knowledge, or All Topics)
-- Instant question evaluation and real-time score updates (+10 points per correct answer)
-- Persistent leaderboard (Top 5 players by total score)
-- Career statistics per player (games played, wins, total points, correct answers)
-- Question bank management: Add new questions or view and delete existing ones
-- Clean JDBC persistence with custom exception handling
+### 🎮 How to Play
 
-## How to Run
-
-1. Configure environment variables:
-   Copy `.env.example` to `.env` and fill in your MySQL credentials (especially `DB_PASSWORD`):
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Simply run the execution script:
-   ```bash
-   ./run.sh
-   ```
-   *(The script automatically loads `.env`, compiles code into `bin/`, syncs SQL resources, and starts the game without interactively prompting for a password).*
-
-## Design Overview
-
-| Area | Implementation |
-|---|---|
-| Object-oriented design | Encapsulated `Player` class; immutable `Question` class |
-| Architecture | Layered DAO architecture (`DBConnection`, `QuestionDAO`, `ScoreDAO`) |
-| Multithreading | `QuestionTimerTask` utilizing `ExecutorService` and `Future` for per-question countdowns |
-| Database | JDBC with MySQL, `PreparedStatement`, transaction management |
-| Exception handling | Custom unchecked `DataAccessException` for robust database error handling |
-
-### Game Flow
-
-1. The player enters their name, selects a topic/category (or chooses "All Topics" for a random mix), and picks the number of questions (1 to 20).
-2. The engine fetches random questions matching the chosen topic from the database.
-3. For each question, the player inputs their answer (A, B, C, or D).
-4. The system validates the input immediately, awards points, and reveals the correct answer with instant feedback.
-5. Upon game completion, results and statistics are saved directly to the MySQL database.
-
-## Project Structure
-
+#### 🖥️ Step 1: On YOUR Computer (Host)
+Run in your terminal:
+```bash
+./run.sh
 ```
-BrainArena/
-├── run.sh               # Single script: compiles & starts the game
-├── README.md
-├── .gitignore
-├── lib/
-│   └── mysql-connector-j-26.10.0.jar
-├── src/
-│   └── main/
-│       ├── java/quizbattle/
-│       │   ├── Main.java
-│       │   ├── dao/
-│       │   ├── model/
-│       │   ├── service/
-│       │   ├── util/
-│       │   └── exception/
-│       └── resources/
-│           ├── schema.sql
-│           └── seed.sql (200 questions)
-└── bin/                 # Generated build output (ignored by git)
+1. Select **`2. Host Live Battle (Fastest Finger LAN)`**.
+2. Choose your topic, number of questions, and round timer (e.g. 10s).
+3. The lobby screen will display:
+   ```text
+   ============================================================
+            ⚡ LIVE FASTEST-FINGER MULTIPLAYER BATTLE ⚡       
+   ============================================================
+     YOUR Wi-Fi IP:      192.168.168.66
+     Battle Port:        5555
+   ------------------------------------------------------------
+     TELL YOUR FRIENDS ON WI-FI TO TYPE THIS IN THEIR TERMINAL:
+       nc 192.168.168.66 5555
+       (or: telnet 192.168.168.66 5555)
+   ============================================================
+   ```
+4. As your friends connect, you will see them appear live:
+   `>> Alex joined the battle room! (Total players: 2)`
+5. When everyone is in, press **[ENTER]** in your terminal to start the battle!
+
+---
+
+#### 💻 Step 2: On YOUR FRIENDS' Computers (No Code Needed!)
+Your friends open their regular terminal (Terminal on Mac/Linux, PowerShell / Command Prompt on Windows) and run:
+```bash
+nc 192.168.168.66 5555
 ```
+*(or `telnet 192.168.168.66 5555`)*
+
+1. Their screen immediately clears and displays:
+   ```text
+   ==================================================
+            🧠 WELCOME TO BRAINARENA BATTLE 🧠       
+   ==================================================
+   Enter your player name: 
+   ```
+2. They enter their name and join your lobby!
+3. When you start, questions appear on all screens simultaneously with a live countdown timer.
+4. They simply type `A`, `B`, `C`, or `D` and hit Enter to buzz in.
+5. Fastest buzz-in gets the **+5 Speed Bonus**!
