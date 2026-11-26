@@ -1,58 +1,107 @@
 # BrainArena
 
-BrainArena is an interactive command-line quiz game written in pure Java (no build tools required). Play solo or compete in **real-time fastest-finger LAN battles** across multiple PCs over the same Wi-Fi network!
+BrainArena is an interactive command-line quiz game written in pure Java (no build tools required). It supports both single-player trivia and real-time fastest-finger LAN multiplayer battles across multiple computers over a local network.
 
----
+## Objectives
 
-## ⚡ Zero-Install Wi-Fi Battle (via Netcat / Telnet)
+1. Deliver a responsive, barrier-free terminal quiz experience with immediate question flow.
+2. Provide real-time fastest-finger multiplayer over local network using standard socket connections.
+3. Store questions, game records, and player statistics in MySQL using JDBC.
+4. Provide a command-line menu to play, view top leaderboards, inspect individual statistics, and manage the question bank.
+5. Apply core object-oriented principles (encapsulation, abstraction, inheritance, polymorphism) in the software design.
 
-Your friends **do not need any Java code, do not need to install anything, and do not need any database credentials**. Every Mac, Windows, and Linux computer already has `nc` (Netcat) or `telnet` pre-installed!
+## Features
 
----
+- **Single-Player and Multiplayer Modes:** Play solo or host real-time LAN battles.
+- **Zero-Install Client for LAN Play:** Connected players only need standard terminal tools (`nc` or `telnet`) without installing Java or configuring databases.
+- **Multithreaded Countdown Timer:** Real-time countdown per question managed via background executor threads.
+- **Category Selection:** Science, History, Technology, Geography, General Knowledge, or All Topics.
+- **Fastest-Finger Speed Bonus:** Awards bonus points for the fastest correct answer in multiplayer rounds.
+- **Instant Evaluation & Scoring:** Immediate feedback with live score updates.
+- **Persistent Leaderboard:** Top player rankings stored and updated in MySQL.
+- **Career Statistics:** Tracks games played, wins, total points, and correct answers.
+- **Question Bank Management:** Add, inspect, and remove questions from the database.
+- **Clean JDBC Architecture:** Layered DAO structure with custom unchecked exception handling.
 
-### 🎮 How to Play
+## How to Run
 
-#### 🖥️ Step 1: On YOUR Computer (Host)
-Run in your terminal:
+### Prerequisites
+
+- Java Development Kit (JDK 8 or higher)
+- MySQL Server
+
+### 1. Environment Setup
+
+Copy `.env.example` to `.env` and configure your database credentials:
+
+```bash
+cp .env.example .env
+```
+
+### 2. Start the Application
+
+Execute the launch script:
+
 ```bash
 ./run.sh
 ```
-1. Select **`2. Host Live Battle (Fastest Finger LAN)`**.
-2. Choose your topic, number of questions, and round timer (e.g. 10s).
-3. The lobby screen will display:
-   ```text
-   ============================================================
-            ⚡ LIVE FASTEST-FINGER MULTIPLAYER BATTLE ⚡       
-   ============================================================
-     YOUR Wi-Fi IP:      192.168.168.66
-     Battle Port:        5555
-   ------------------------------------------------------------
-     TELL YOUR FRIENDS ON WI-FI TO TYPE THIS IN THEIR TERMINAL:
-       nc 192.168.168.66 5555
-       (or: telnet 192.168.168.66 5555)
-   ============================================================
-   ```
-4. As your friends connect, you will see them appear live:
-   `>> Alex joined the battle room! (Total players: 2)`
-5. When everyone is in, press **[ENTER]** in your terminal to start the battle!
 
----
+The script automatically loads `.env`, compiles source files into `bin/`, synchronizes SQL scripts, and launches the application.
 
-#### 💻 Step 2: On YOUR FRIENDS' Computers (No Code Needed!)
-Your friends open their regular terminal (Terminal on Mac/Linux, PowerShell / Command Prompt on Windows) and run:
+## Multiplayer Setup (LAN Battle)
+
+### Host (Computer Running BrainArena)
+
+1. Run `./run.sh` and select **Host Live Battle (Fastest Finger LAN)**.
+2. Select topic, number of questions, and round timer.
+3. The lobby screen will output the host Wi-Fi IP address and port (default: `5555`).
+4. Once all players have joined, press **Enter** to start the match.
+
+### Client Players (Connecting over Local Network)
+
+Clients do not require Java or repository setup. On any computer connected to the same Wi-Fi network, players run:
+
 ```bash
-nc 192.168.168.66 5555
+nc <HOST_IP> 5555
 ```
-*(or `telnet 192.168.168.66 5555`)*
 
-1. Their screen immediately clears and displays:
-   ```text
-   ==================================================
-            🧠 WELCOME TO BRAINARENA BATTLE 🧠       
-   ==================================================
-   Enter your player name: 
-   ```
-2. They enter their name and join your lobby!
-3. When you start, questions appear on all screens simultaneously with a live countdown timer.
-4. They simply type `A`, `B`, `C`, or `D` and hit Enter to buzz in.
-5. Fastest buzz-in gets the **+5 Speed Bonus**!
+*(On Windows, `telnet <HOST_IP> 5555` or `ncat` can be used).*
+
+Players enter their display name and submit answers (`A`, `B`, `C`, or `D`) directly in their terminal.
+
+## Design Overview
+
+| Area | Implementation |
+|---|---|
+| Object-Oriented Design | Encapsulated `Player` base class; `ConnectedPlayer` specialization; immutable `Question` and `Answer` models |
+| Networking | Multithreaded TCP server (`QuizServer`) accepting standard socket/Telnet/Netcat connections |
+| Architecture | Layered DAO architecture (`DBConnection`, `QuestionDAO`, `ScoreDAO`) |
+| Multithreading | Thread pools and concurrent collections (`CopyOnWriteArrayList`, `AtomicBoolean`, `ExecutorService`) |
+| Database | JDBC with MySQL, `PreparedStatement`, transaction handling |
+| Exception Handling | Custom unchecked `DataAccessException` for resilient persistence layer |
+
+## Project Structure
+
+```
+BrainArena/
+├── run.sh                  # Execution script (compiles & runs application)
+├── README.md               # Documentation
+├── .env.example            # Sample database environment configuration
+├── .gitignore
+├── lib/
+│   └── mysql-connector-j-26.10.0.jar
+├── src/
+│   └── main/
+│       ├── java/quizbattle/
+│       │   ├── Main.java
+│       │   ├── dao/
+│       │   ├── model/
+│       │   ├── net/
+│       │   ├── service/
+│       │   ├── util/
+│       │   └── exception/
+│       └── resources/
+│           ├── schema.sql
+│           └── seed.sql
+└── bin/                    # Compiled classes (ignored by git)
+```
